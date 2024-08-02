@@ -9,7 +9,8 @@ use Illuminate\Validation\ValidationException;
 
 class UsernameController extends Controller
 {
-    function index() {
+    function index()
+    {
         return view('username');
     }
 
@@ -24,5 +25,4 @@ class UsernameController extends Controller
             ], 422);
         }
     }
-
 }
