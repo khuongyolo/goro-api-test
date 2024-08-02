@@ -18,6 +18,8 @@ class UsernameController extends Controller
     function username(UsernameRequest $request)
     {
         try {
+            $rq = $request->all();
+            dd($rq);
             return response()->json(['message' => 'Username is valid and saved successfully!'], 200);
         } catch (ValidationException $e) {
             return response()->json([

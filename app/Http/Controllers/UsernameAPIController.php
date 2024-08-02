@@ -58,6 +58,7 @@ class UsernameAPIController extends Controller
     function username(UsernameRequest $request)
     {
         try {
+            dd($request);
             return response()->json(['message' => 'Username is valid and saved successfully!'], 200);
         } catch (ValidationException $e) {
             return response()->json([
