@@ -29,9 +29,7 @@ class PostController extends Controller
 
         // Create new post
         Post::create($validatedData);
-
-
-        // return response()->json(['message' => 'Post created successfully', 'post' => $post], 200);
+        return response()->json(['message' => 'Username is valid and saved successfully!'], 200);
     } catch (ValidationException $e) {
             return response()->json([
                 'errors' => $e->errors()
@@ -44,36 +42,20 @@ class PostController extends Controller
         return view('addpost');
     }
 
-    // function addPosts(Request $request){
-    //     try{
-    //     // Validate incoming request data
-    //     $validatedData = $request->validate([
-    //         'title' => 'required|string|max:255',
-    //         'content' => 'required|string',
-    //         'author' => 'required|string|max:255',
-    //     ]);
-
-    //     // Create new post
-    //     $post = Post::create($validatedData);
-
-    //     // Optionally, you can return the created post as JSON response
-    //     return response()->json(['message' => 'Post created successfully', 'post' => $post], 200);
-    // } catch (ValidationException $e) {
-    //         return response()->json([
-    //             'errors' => $e->errors()
-    //         ], 422);
-    //     }
-    // }
     function addPosts(PostRequest $request){
         try{
-
-        $post = Post::create($request->all());
-
-        // Optionally, you can return the created post as JSON response
-        Session::flash('newPost', 'successfully');
-        return redirect(route('user.register'));
-    } catch (Exception $e) {
-            return back()->withErrors('error')->withInput();
+            Post::create($request->all());
+            // Optionally, you can return the created post as JSON response
+            Session::flash('newPost', 'successfully');
+            return redirect(route('addpostsindex'));
         }
-    }
+        catch (Exception $e) {
+                return back()->withErrors('error')->withInput();
+            }
+
+
+        }
 }
+
+
+
