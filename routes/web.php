@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsernameAPIController;
 use App\Http\Controllers\UsernameController;
+use App\Http\Controllers\PostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +24,6 @@ Route::get('/', function () {
 
 Route::get('/username', [UsernameController::class, 'index'])->name('username');
 Route::post('/username', [UsernameController::class, 'username'])->name('username');
+
+Route::get('/addpost', [PostController::class, 'addpostsIndex'])->name('addpostsindex');
+Route::post('/addpost', [PostController::class, 'addposts'])->name('addposts');

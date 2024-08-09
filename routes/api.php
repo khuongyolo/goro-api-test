@@ -20,5 +20,8 @@ Route::get('/index', [PostController::class, 'index'])->name('index');
 Route::post('/addpost', [PostController::class, 'addPost'])->name('addpost');
 
 
+Route::get('/goro-api', [UsernameAPIController::class, 'index'])->name('username');
+
+
 Route::get('/username', [UsernameAPIController::class, 'index'])->name('username');
 Route::post('/username', [UsernameAPIController::class, 'username'])->name('username');
