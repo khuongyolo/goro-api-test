@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Validation\ValidationException;
 
 class PostController extends Controller
 {
@@ -19,6 +20,7 @@ class PostController extends Controller
     }
 
     function addPost(Request $request){
+        try{
         // Validate incoming request data
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
@@ -31,5 +33,10 @@ class PostController extends Controller
 
         // Optionally, you can return the created post as JSON response
         return response()->json(['message' => 'Post created successfully', 'post' => $post], 200);
+    } catch (ValidationException $e) {
+            return response()->json([
+                'errors' => $e->errors()
+            ], 422);
+        }
     }
 }
