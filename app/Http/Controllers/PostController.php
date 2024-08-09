@@ -30,6 +30,6 @@ class PostController extends Controller
         $post = Post::create($validatedData);
 
         // Optionally, you can return the created post as JSON response
-        return response()->json(['message' => 'Post created successfully', 'post' => $post], 201);
+        return response()->json(['message' => 'Post created successfully', 'post' => $post], 200);
     }
 }
