@@ -16,8 +16,8 @@ use App\Http\Controllers\UsernameAPIController;
 |
 */
 
-Route::get('/index', [PostController::class, 'index'])->name('index');
-Route::post('/addpost', [PostController::class, 'addPost'])->name('addpost');
+Route::get('/index', [PostController::class, 'index'])->name('api.index');
+Route::post('/addpost', [PostController::class, 'addPost'])->name('api.addpost');
 
 
 Route::get('/goro-api', [UsernameAPIController::class, 'index'])->name('username');

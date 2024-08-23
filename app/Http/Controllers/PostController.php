@@ -28,7 +28,7 @@ class PostController extends Controller
         ]);
 
         // Create new post
-        Post::create($validatedData);
+        Post::create($request->all());
         return response()->json(['message' => 'Username is valid and saved successfully!'], 200);
     } catch (ValidationException $e) {
             return response()->json([
@@ -36,7 +36,6 @@ class PostController extends Controller
             ], 422);
         }
     }
-
 
     function addPostsIndex(){
         return view('addpost');
@@ -52,8 +51,6 @@ class PostController extends Controller
         catch (Exception $e) {
                 return back()->withErrors('error')->withInput();
             }
-
-
         }
 }
 
