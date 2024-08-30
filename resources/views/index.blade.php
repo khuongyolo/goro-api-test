@@ -26,6 +26,7 @@
         <table class="table table-striped table-hover table-bordered align-middle">
             <thead class="table-dark">
                 <tr>
+                    <th scope="col">No</th>
                     <th scope="col">Title</th>
                     <th scope="col">Content</th>
                     <th scope="col">Author</th>
@@ -36,6 +37,7 @@
             <tbody>
                 @foreach ($posts as $post)
                     <tr>
+                        <td>{{ $post->id }}</td>
                         <td>{{ $post->title }}</td>
                         <td>{{ $post->content }}</td>
                         <td>{{ $post->author }}</td>
