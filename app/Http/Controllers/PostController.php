@@ -8,50 +8,96 @@ use Illuminate\Validation\ValidationException;
 use Exception;
 use App\Http\Requests\PostRequest;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
-    function index(){
-        $posts = Post::orderBy('created_at', 'desc')->get();
-        return response()->json([
-            'data'  => $posts,
-        ]);
+
+    function welcome(){
+        $posts = Post::all();
+        return view('welcome',compact('posts'));
     }
 
-    function addPost(Request $request){
-        try{
-        // Validate incoming request data
-        $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'author' => 'required|string|max:255',
-        ]);
-
-        // Create new post
-        Post::create($request->all());
-        return response()->json(['message' => 'Username is valid and saved successfully!'], 200);
-    } catch (ValidationException $e) {
-            return response()->json([
-                'errors' => $e->errors()
-            ], 422);
+    function index(){
+        Session::put('collapse', 1);
+        try {
+            $posts = Post::all();
+            return view('index', compact('posts'));
+        }
+        catch (Exception $e) {
+            Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());
+            return back()->withErrors('error')->withInput();
         }
     }
 
-    function addPostsIndex(){
-        return view('addpost');
+    function edit($id){
+        try {
+            $post = Post::find($id);
+            if (empty($post)) return back()->withErrors(['error' => 'This post does not exist or has been deleted.'])->withInput();
+
+            Session::put('post.id', $id);
+            return view('edit', compact('post'));
+        }
+        catch (Exception $e) {
+            Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());
+            return back()->withErrors('error')->withInput();
+        }
     }
 
-    function addPosts(PostRequest $request){
+    function update(PostRequest $request) {
+        try {
+            $id = Session::pull('post.id');
+            // dd($request->title);
+            $post = Post::find($id);
+            if (empty($post)) return redirect(route('index'))->withErrors(['error' => 'This post does not exist']);
+            $post->title      = $request->title;
+            $post->content    = $request->content;
+            $post->author     = $request->author;
+            // save DB
+            $post->save();
+            Session::put('post.info', 'Post updated successfully');
+            return redirect(route('edit', ['id' => $id]));
+        }
+        catch (Exception $e) {
+            Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());
+            return back()->withErrors('error')->withInput();
+        }
+    }
+
+    function delete($id){
+        try {
+            $post = Post::find($id);
+            if ($post) $post->delete();
+            Session::put('post.info', 'Post has been successfully deleted.');
+
+            return redirect(route('index'));
+        }
+        catch (Exception $e) {
+            Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());
+            return back()->withErrors('error')->withInput();
+        }
+    }
+
+
+    function register(PostRequest $request){
+        Session::put('collapse', 1);
         try{
+            if ($request->method() ==  'GET') return view('register');
             Post::create($request->all());
             // Optionally, you can return the created post as JSON response
             Session::flash('newPost', 'successfully');
-            return redirect(route('addpostsindex'));
+            return redirect(route('register'));
+        }
+        catch (ValidationException $e) {
+            dd(Session::get('collapse'));
+            return back()->withErrors('error')->withInput();
         }
         catch (Exception $e) {
-                return back()->withErrors('error')->withInput();
-            }
+            Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());
+            return back()->withErrors('error')->withInput();
         }
+
+    }
 }
 
 

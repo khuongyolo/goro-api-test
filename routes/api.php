@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostAPIController;
 use App\Http\Controllers\UsernameAPIController;
 
 /*
@@ -16,12 +17,17 @@ use App\Http\Controllers\UsernameAPIController;
 |
 */
 
-Route::get('/index', [PostController::class, 'index'])->name('api.index');
-Route::post('/addpost', [PostController::class, 'addPost'])->name('api.addpost');
+// Route::get('/index', [PostAPIController::class, 'index'])->name('api.index');
+// Route::post('/addpost', [PostAPIController::class, 'addPost'])->name('api.addpost');
 
 
-Route::get('/goro-api', [UsernameAPIController::class, 'index'])->name('username');
-
-
-Route::get('/username', [UsernameAPIController::class, 'index'])->name('username');
-Route::post('/username', [UsernameAPIController::class, 'username'])->name('username');
+// POST index
+Route::match(['get', 'post'], '/index', [PostAPIController::class, 'index'])->name('api.index');
+// POST edit
+Route::get('/edit/{id}', [PostAPIController::class, 'edit'])->name('api.edit');
+// POST update
+Route::post('/update', [PostAPIController::class, 'update'])->name('api.update');
+// POST delete
+Route::get('/delete/{id}', [PostAPIController::class, 'delete'])->name('api.delete');
+// POST register
+Route::match(['get', 'post'], '/register', [PostAPIController::class, 'register'])->name('api.register');
