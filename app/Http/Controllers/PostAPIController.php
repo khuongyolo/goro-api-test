@@ -140,7 +140,7 @@ class PostAPIController extends Controller
     {
         try {
             $post = Post::find($id);
-            $post->delete();
+            if ($post) $post->delete();
 
             return response()->json([
                 'redirect'  => '/api/index',
