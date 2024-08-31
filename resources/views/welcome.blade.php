@@ -11,16 +11,23 @@
     @if (Session::has('newPost'))
         <p>{{ Session::pull('newPost') }}</p>
     @endif
+    @if (Session::has('post.info'))
+        <div class="alert alert-primary alert-dismissible fade show text-center" role="alert">
+            <strong>{{ Session::pull('post.info') }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    <h1>GORO API</h1>
     <div class="accordion" id="accordionExample">
         {{-- GET /api/index --}}
         <div class="accordion-item">
             <h2 class="accordion-header">
-            <button class="accordion-button {{ Session::get('collapse') != 1 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="{{ Session::get('collapse') == 1 ? true : false }}" aria-controls="collapse1">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false" aria-controls="collapse1">
                 <div class="btn btn-primary">GET</div>
                 <strong>&nbsp;&nbsp;&nbsp;&nbsp;/api/index</strong>
             </button>
             </h2>
-            <div id="collapse1" class="accordion-collapse collapse {{ Session::get('collapse') == 1 ? 'show' : '' }}" data-bs-parent="#accordionExample">
+            <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body">
                     <h2>Parameters</h2>
                     <form action="{{ route('api.index') }}" method="GET">
@@ -31,6 +38,7 @@
                         </div>
                     </form>
                     <h2>Responses</h2>
+                    <h3>200 OK</h3>
                         <div id="error-container">
                             <pre><code>
 {
@@ -63,6 +71,16 @@
 }
                             </code></pre>
                         </div>
+                    <h3>500 Internal Server Error</h3>
+                        <div id="error-container">
+                            <pre><code>
+{
+  "redirect":'/api/index',
+  "error": 'An unexpected error occurred',
+  "message": $e->getMessage()
+}
+                            </code></pre>
+                        </div>
 
 
                 </div>
@@ -73,12 +91,12 @@
         {{-- POST /api/index --}}
         <div class="accordion-item">
             <h2 class="accordion-header">
-            <button class="accordion-button {{ Session::get('collapse') != 2 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="{{ Session::get('collapse') == 2 ? true : false }}" aria-controls="collapse2">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
                 <div class="btn btn-success">POST</div>
                 <strong>&nbsp;&nbsp;&nbsp;&nbsp;/api/index</strong>
             </button>
             </h2>
-            <div id="collapse2" class="accordion-collapse collapse {{ Session::get('collapse') == 2 ? 'show' : '' }}" data-bs-parent="#accordionExample">
+            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body">
                     <h2>Parameters</h2>
                     <form action="{{ route('api.index') }}" method="GET">
@@ -128,18 +146,18 @@
         </div>
         {{-- end POST /api/index --}}
 
-        {{-- POST /api/addpost --}}
+        {{-- POST /api/register --}}
         <div class="accordion-item">
             <h2 class="accordion-header">
-            <button class="accordion-button {{ Session::get('collapse') != 3 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="{{ Session::get('collapse') == 3 ? true : false }}" aria-controls="collapse3">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
                 <div class="btn btn-success">POST</div>
                 <strong>&nbsp;&nbsp;&nbsp;&nbsp;/api/register</strong>
             </button>
             </h2>
-            <div id="collapse3" class="accordion-collapse collapse {{ Session::get('collapse') == 3 ? 'show' : '' }}" data-bs-parent="#accordionExample">
+            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
                     <h2>Parameters</h2>
-                    <form id="myForm" method="POST">
+                    <form id="register_form" method="POST">
                         @csrf
                         <div class="mb-3 row">
                             <label for="title" class="col-sm-2 col-form-label">Title<span class="text-danger"> *required</span></label>
@@ -161,12 +179,20 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-10 offset-sm-2">
-                                <button type="submit" class="btn btn-primary" onclick="setFormAction('{{ route('register') }}')">Submit</button>
-                                <button type="submit" class="btn btn-primary" onclick="setFormAction('{{ route('api.register') }}')">Submit API</button>
+                                <button type="submit" class="btn btn-primary" onclick="setFormAction('register_form', '{{ route('register') }}')">Register</button>
+                                <button type="submit" class="btn btn-primary" onclick="setFormAction('register_form', '{{ route('api.register') }}')">Register API</button>
                             </div>
                         </div>
                     </form>
                     <h2>Responses</h2>
+                    <h3>200 OK</h3>
+                        <div id="error-container">
+                            <pre><code>
+{
+  "message": "Username is valid and saved successfully!"
+}
+                            </code></pre>
+                        </div>
                     <h3>422 Unprocessable Entity</h3>
                         <div id="error-container">
                             <pre><code>
@@ -185,16 +211,16 @@
 }
                             </code></pre>
                         </div>
-                                            <h3>200 OK</h3>
+                    <h3>500 Internal Server Error</h3>
                         <div id="error-container">
                             <pre><code>
 {
-  "message": "Username is valid and saved successfully!"
+  "redirect":'/api/index',
+  "error": 'An unexpected error occurred',
+  "message": $e->getMessage()
 }
                             </code></pre>
                         </div>
-
-
                 </div>
             </div>
         </div>
@@ -203,51 +229,77 @@
         {{-- GET /api/edit --}}
         <div class="accordion-item">
             <h2 class="accordion-header">
-            <button class="accordion-button {{ Session::get('collapse') != 4 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="{{ Session::get('collapse') == 4 ? true : false }}" aria-controls="collapse4">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
                 <div class="btn btn-primary">GET</div>
                 <strong>&nbsp;&nbsp;&nbsp;&nbsp;/api/edit/{id}</strong>
             </button>
             </h2>
-            <div id="collapse4" class="accordion-collapse collapse {{ Session::get('collapse') == 4 ? 'show' : '' }}" data-bs-parent="#accordionExample">
+            <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body">
                     <h2>Parameters</h2>
-                    <form action="{{ route('api.index') }}" method="GET">
-                        <div class="row">
-                            <div class="col-sm-10 offset-sm-2">
-                                <button type="submit" class="btn btn-primary">Submit API</button>
-                            </div>
-                        </div>
-                    </form>
+                    <table class="table table-striped table-hover table-bordered align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">No</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Content</th>
+                                <th scope="col">Author</th>
+                                <th scope="col">Edit</th>
+                                <th scope="col">Edit API</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr>
+                                    <td>{{ $posts->first()->id }}</td>
+                                    <td>{{ $posts->first()->title }}</td>
+                                    <td>{{ $posts->first()->content }}</td>
+                                    <td>{{ $posts->first()->author }}</td>
+                                    <td>
+                                        <a href="{{ route('edit', ['id' => $posts->first()->id]) }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-pencil-square"></i> Edit
+                                        </a>
+                                    </td>
+                                    <td style="white-space: nowrap;">
+                                        <a href="{{ route('api.edit', ['id' => $posts->first()->id]) }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-pencil-square"></i> Edit API
+                                        </a>
+                                    </td>
+                                </tr>
+                        </tbody>
+                    </table>
                     <h2>Responses</h2>
+                                        <h3>200 OK</h3>
                         <div id="error-container">
                             <pre><code>
 {
-  "data": [
-    {
-      "id": 89,
-      "title": "2123",
-      "content": "awd",
-      "author": "awd",
-      "created_at": "2024-08-23T14:30:53.000000",
-      "updated_at": "2024-08-23T14:30:53.000000"
-    },
-    {
-      "id": 88,
-      "title": "123",
-      "content": "123",
-      "author": "123",
-      "created_at": "2024-08-23T13:54:15.000000Z",
-      "updated_at": "2024-08-23T13:54:15.000000Z"
-    },
-    {
-      "id": 87,
-      "title": "adawdaw",
-      "content": "awdawdawd",
-      "author": "1111111",
-      "created_at": "2024-08-23T13:50:18.000000Z",
-      "updated_at": "2024-08-23T13:50:18.000000Z"
-    },
-  ]
+  "view": "/api/edit20",
+  "data": {
+    "id": 20,
+    "title": "Fugit iste officia quasi non necessitatibus.",
+    "content": "Laudantium sit totam quod maxime praesentium. Autem laboriosam labore omnis facere impedit. Temporibus enim autem quisquam officiis sit amet.",
+    "author": "Ottis Reilly",
+    "created_at": "2024-08-02T21:07:26.000000Z",
+    "updated_at": "2024-08-02T21:07:26.000000Z"
+  }
+}
+                            </code></pre>
+                        </div>
+                    <h3>404 Not Found</h3>
+                        <div id="error-container">
+                            <pre><code>
+{
+  "redirect": "/api/index",
+  "error": "This post does not exist"
+}
+                            </code></pre>
+                        </div>
+                    <h3>500 Internal Server Error</h3>
+                        <div id="error-container">
+                            <pre><code>
+{
+  "redirect":'/api/index',
+  "error": 'An unexpected error occurred',
+  "message": $e->getMessage()
 }
                             </code></pre>
                         </div>
@@ -261,51 +313,69 @@
         {{-- POST /api/update --}}
         <div class="accordion-item">
             <h2 class="accordion-header">
-            <button class="accordion-button {{ Session::get('collapse') != 5 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="{{ Session::get('collapse') == 5 ? true : false }}" aria-controls="collapse5">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
                 <div class="btn btn-success">POST</div>
                 <strong>&nbsp;&nbsp;&nbsp;&nbsp;/api/update</strong>
             </button>
             </h2>
-            <div id="collapse5" class="accordion-collapse collapse {{ Session::get('collapse') == 5 ? 'show' : '' }}" data-bs-parent="#accordionExample">
+            <div id="collapse5" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body">
                     <h2>Parameters</h2>
-                    <form action="{{ route('api.index') }}" method="GET">
-                        <div class="row">
-                            <div class="col-sm-10 offset-sm-2">
-                                <button type="submit" class="btn btn-primary">Submit API</button>
+                    <div class="card-body">
+                        <form id="update_form" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-text-paragraph"></i>Title</span>
+                                    <input type="text" class="form-control" id="title" name="title" value="{{ old('title', $posts->first()->title) }}" placeholder="Enter title">
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-file-text"></i>Content</span>
+                                    <input type="text" class="form-control" id="content" name="content" value="{{ old('content', $posts->first()->content) }}" placeholder="Enter content">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person-circle"></i>Author</span>
+                                    <input type="text" class="form-control" id="author" name="author" value="{{ old('author', $posts->first()->author) }}" placeholder="Enter author name">
+                                </div>
+                            </div>
+                            <button class="btn btn-success" type="submit" onclick="setFormAction('update_form', '{{ route('update') }}')">
+                                <i class="bi bi-save"></i> Update
+                            </button>
+                            <button class="btn btn-success" type="submit" onclick="setFormAction('update_form', '{{ route('api.update') }}')">
+                                <i class="bi bi-save"></i> Update API
+                            </button>
+                        </form>
+                    </div>
                     <h2>Responses</h2>
+                    <h3>200 OK</h3>
                         <div id="error-container">
                             <pre><code>
 {
-  "data": [
-    {
-      "id": 89,
-      "title": "2123",
-      "content": "awd",
-      "author": "awd",
-      "created_at": "2024-08-23T14:30:53.000000",
-      "updated_at": "2024-08-23T14:30:53.000000"
-    },
-    {
-      "id": 88,
-      "title": "123",
-      "content": "123",
-      "author": "123",
-      "created_at": "2024-08-23T13:54:15.000000Z",
-      "updated_at": "2024-08-23T13:54:15.000000Z"
-    },
-    {
-      "id": 87,
-      "title": "adawdaw",
-      "content": "awdawdawd",
-      "author": "1111111",
-      "created_at": "2024-08-23T13:50:18.000000Z",
-      "updated_at": "2024-08-23T13:50:18.000000Z"
-    },
-  ]
+  "redirect": "/api/edit/27",
+  "message": "Post updated successfully"
+}
+                            </code></pre>
+                        </div>
+                    <h3>404 Not Found</h3>
+                        <div id="error-container">
+                            <pre><code>
+{
+  "redirect": "/api/index",
+  "error": "This post does not exist"
+}
+                            </code></pre>
+                        </div>
+                    <h3>500 Internal Server Error</h3>
+                        <div id="error-container">
+                            <pre><code>
+{
+  "redirect":'/api/index',
+  "error": 'An unexpected error occurred',
+  "message": $e->getMessage()
 }
                             </code></pre>
                         </div>
@@ -317,21 +387,44 @@
         {{-- GET/api/delete/{id} --}}
         <div class="accordion-item">
             <h2 class="accordion-header">
-            <button class="accordion-button {{ Session::get('collapse') != 6 ? 'collapsed' : '' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="{{ Session::get('collapse') == 6 ? true : false }}" aria-controls="collapse5">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse5">
                 <div class="btn btn-primary">GET</div>
                 <strong>&nbsp;&nbsp;&nbsp;&nbsp;/api/delete/{id}</strong>
             </button>
             </h2>
-            <div id="collapse6" class="accordion-collapse collapse {{ Session::get('collapse') == 6 ? 'show' : '' }}" data-bs-parent="#accordionExample">
+            <div id="collapse6" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body">
                     <h2>Parameters</h2>
-                    <form action="{{ route('api.delete', ['id' => $posts->first()->id]) }}" method="GET">
-                        <div class="row">
-                            <div class="col-sm-10 offset-sm-2">
-                                <button type="submit" class="btn btn-danger btn-sm">Submit API</button>
-                            </div>
-                        </div>
-                    </form>
+                    <table class="table table-striped table-hover table-bordered align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">No</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Content</th>
+                                <th scope="col">Author</th>
+                                <th scope="col">Delete</th>
+                                <th scope="col">Delete API</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr>
+                                    <td>{{ $posts->first()->id }}</td>
+                                    <td>{{ $posts->first()->title }}</td>
+                                    <td>{{ $posts->first()->content }}</td>
+                                    <td>{{ $posts->first()->author }}</td>
+                                    <td>
+                                        <a href="{{ route('delete', ['id' => $posts->first()->id]) }}" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-pencil-square"></i> Delete
+                                        </a>
+                                    </td>
+                                    <td style="white-space: nowrap;">
+                                        <a href="{{ route('api.delete', ['id' => $posts->first()->id]) }}" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-pencil-square"></i> Delete API
+                                        </a>
+                                    </td>
+                                </tr>
+                        </tbody>
+                    </table>
                     <h2>Responses</h2>
                     <h3>200 OK</h3>
                         <div id="error-container">
@@ -359,8 +452,31 @@
     </div>
 @endsection
 <script>
-    function setFormAction(action) {
-        const form = document.getElementById('myForm');
+    function setFormAction(form_id, action) {
+        const form = document.getElementById(form_id);
         form.action = action;
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+    var accordionExample = document.getElementById('accordionExample');
+    var accordions = accordionExample.querySelectorAll('.accordion-button');
+
+    accordions.forEach(function (button) {
+        button.addEventListener('click', function () {
+            var target = button.getAttribute('data-bs-target');
+            localStorage.setItem('activeAccordion', target);
+        });
+    });
+
+    var activeAccordion = localStorage.getItem('activeAccordion');
+    if (activeAccordion) {
+        var collapseElement = document.querySelector(activeAccordion);
+        var bsCollapse = new bootstrap.Collapse(collapseElement, {
+            toggle: true
+        });
+    }
+});
+
+
+
 </script>

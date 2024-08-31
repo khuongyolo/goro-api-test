@@ -9,17 +9,19 @@ use Exception;
 use App\Http\Requests\PostRequest;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Cache;
 
 class PostController extends Controller
 {
 
     function welcome(){
         $posts = Post::all();
+        Cache::put('post.id', $posts->first()->id, 60);
         return view('welcome',compact('posts'));
     }
 
     function index(){
-        Session::put('collapse', 1);
         try {
             $posts = Post::all();
             return view('index', compact('posts'));
@@ -46,8 +48,7 @@ class PostController extends Controller
 
     function update(PostRequest $request) {
         try {
-            $id = Session::pull('post.id');
-            // dd($request->title);
+            $id = Session::pull('post.id') ?? Cache::get('post.id');
             $post = Post::find($id);
             if (empty($post)) return redirect(route('index'))->withErrors(['error' => 'This post does not exist']);
             $post->title      = $request->title;
@@ -56,7 +57,7 @@ class PostController extends Controller
             // save DB
             $post->save();
             Session::put('post.info', 'Post updated successfully');
-            return redirect(route('edit', ['id' => $id]));
+            return back()->withInput();
         }
         catch (Exception $e) {
             Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());

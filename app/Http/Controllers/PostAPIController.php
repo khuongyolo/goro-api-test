@@ -11,49 +11,13 @@ use App\Http\Requests\PostAPIRequest;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Cache;
 
 class PostAPIController extends Controller
 {
-    // function index(){
-    //     $posts = Post::orderBy('created_at', 'desc')->get();
-    //     return response()->json([
-    //         'data'  => $posts,
-    //     ]);
-    // }
-
-    // function addPost(PostAPIRequest $request){
-    //     try{
-
-    //     // Create new post
-    //     Post::create($request->all());
-    //     return response()->json(['message' => 'Username is valid and saved successfully!'], 200);
-    // } catch (ValidationException $e) {
-    //         return response()->json([
-    //             'errors' => $e->errors()
-    //         ], 422);
-    //     }
-    // }
-
-    // function addPostsIndex(){
-    //     return view('addpost');
-    // }
-
-    // function addPosts(PostRequest $request){
-    //     try{
-    //         Post::create($request->all());
-    //         // Optionally, you can return the created post as JSON response
-    //         Session::flash('newPost', 'successfully');
-    //         return redirect(route('addpostsindex'));
-    //     }
-    //     catch (Exception $e) {
-    //             return back()->withErrors('error')->withInput();
-    //         }
-    //     }
-
-
     function index()
     {
-        Session::put('collapse', 1);
         try {
             $posts = Post::all();
             return response()->json([
@@ -82,7 +46,7 @@ class PostAPIController extends Controller
                 ], Response::HTTP_NOT_FOUND); // 404 Not Found
             }
 
-            Session::put('post.id', $id);
+            Cache::put('post.id', $post->id, 60);
             return response()->json([
                 'view'  => '/api/edit' . $id,
                 'data'  => $post,
@@ -101,12 +65,13 @@ class PostAPIController extends Controller
     function update(PostAPIRequest $request)
     {
         try {
-            $id = Session::pull('post.id');
+            $id = (Cache::get('post.id'));
             $post = Post::find($id);
             if (empty($post)) {
                 return response()->json([
                     'redirect' => '/api/index',
-                    'error' => 'This post does not exist'
+                    'error' => 'This post does not exist',
+                    'id'    => $id
                 ], Response::HTTP_NOT_FOUND); // 404 Not Found
             }
 
@@ -115,7 +80,6 @@ class PostAPIController extends Controller
             $post->author     = $request->author;
             // save DB
             $post->save();
-
             return response()->json([
                 'redirect'  => '/api/edit/' . $id,
                 'message'   => 'Post updated successfully',
@@ -160,7 +124,6 @@ class PostAPIController extends Controller
 
     function register(PostAPIRequest $request)
     {
-        Session::put('collapse', 1);
         try {
             Post::create($request->all());
 
