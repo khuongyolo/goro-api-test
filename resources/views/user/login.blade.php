@@ -1,5 +1,13 @@
 @extends('user.layout')
 @section('user.content')
+
+@if (Cache::has('user.info'))
+    <div class="alert alert-primary alert-dismissible fade show text-center" role="alert">
+        <strong>{{ Cache::pull('user.info') }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
     <h2 class="text-center mb-4">Login</h2>
 
     <!-- UserID and Password Login Form -->

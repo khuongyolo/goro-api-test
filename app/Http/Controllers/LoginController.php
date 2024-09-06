@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 
@@ -77,7 +78,6 @@ class LoginController extends Controller
                 'email' => $request->email,
                 'password' => $request->password,
             ];
-            Session::put('user.register_request', $old_request);
 
             $verify_code = Str::random(32);
 
@@ -149,6 +149,7 @@ class LoginController extends Controller
         $user->update_user = 'GORO';
         $user->save();
         Session::put('user.info', 'Registered Successfully');
+        Cache::put('user.info', 'Registered Successfully', 3600);
         return redirect(route('user.top'));
     }
 
