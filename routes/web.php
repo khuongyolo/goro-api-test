@@ -17,11 +17,19 @@ use App\Http\Controllers\LoginController;
 |
 */
 Route::prefix('/user')->name('user.')->group(function () {
-    Route::get('/login', [LoginController::class, 'login'])->name('login');
+    Route::any('/logout', [LoginController::class, 'logout'])->name('logout');
+
+    Route::get('/', [LoginController::class, 'index'])->name('top');
+    Route::post('/login', [LoginController::class, 'login'])->name('login');
     Route::match(['get', 'post'], '/register', [LoginController::class, 'register'])->name('register');
     // Route::get('/verify', [LoginController::class, 'showVerifyOtp'])->name('showverifyotp');
     // Route::post('/verify', [LoginController::class, 'verifyOtp'])->name('verifyotp');
+    Route::get('/register_success', [LoginController::class, 'register_success'])->name('register_success');
     Route::get('/verify/{verify_code}', [LoginController::class, 'verify'])->name('verify');
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/homepage', [LoginController::class, 'homepage'])->name('homepage');
+    });
 });
 
 

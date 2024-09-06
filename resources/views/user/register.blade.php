@@ -36,6 +36,6 @@
 
     <!-- Optional: Login Link -->
     <div class="text-center mt-3">
-        <a href="{{ route('user.login') }}">Already have an account? Login here</a>
+        <a href="{{ route('user.top') }}">Already have an account? Login here</a>
     </div>
 @endsection
