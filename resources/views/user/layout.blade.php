@@ -17,13 +17,13 @@
                         @foreach ($errors->all() as $error)
                             <strong>※{{ $error }}</strong> <br>
                         @endforeach
-                        @endif
+                    @endif
 
-                        @if (Session::has('user.info'))
-                            <div class="alert alert-primary alert-dismissible fade show text-center" role="alert">
-                                <strong>{{ Session::pull('user.info') }}</strong>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
+                    @if (Session::has('user.info'))
+                        <div class="alert alert-primary alert-dismissible fade show text-center" role="alert">
+                            <strong>{{ Session::pull('user.info') }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
                     @endif
 
                     @yield('user.content')
