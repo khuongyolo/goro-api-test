@@ -102,9 +102,6 @@ class LoginController extends Controller
             $mailKind = 'register';
             Mail::to($registerEmail)->send(new ConfirmationMail($mailData, $mailKind));
 
-
-            // Session::put('user.verify_otp', $verify_);
-            // 登録成功画面にリダイレクトする
             return redirect(route('user.register_success'));
         } catch (Exception $e) {
             // 例外が発生した場合、ログを出力する
@@ -142,15 +139,21 @@ class LoginController extends Controller
     // }
 
     function verify($verify_code) {
-        $user = User::where('verify_code', $verify_code)->first();
-        if (!$user->exists()) return redirect(route('user.top'))->withErrors(['error' => 'User does not exist']);
-        $user->verify_code = '0';
-        $user->updated_at = now();
-        $user->update_user = 'GORO';
-        $user->save();
-        Session::put('user.info', 'Registered Successfully');
-        Cache::put('user.info', 'Registered Successfully', 3600);
-        return redirect(route('user.top'));
+        try {
+            $user = User::where('verify_code', $verify_code)->first();
+            if (empty($user)) return redirect(route('user.top'))->withErrors(['error' => 'User does not exist']);
+            $user->verify_code = '0';
+            $user->updated_at = now();
+            $user->update_user = 'GORO';
+            $user->save();
+            Session::put('user.info', 'Registered Successfully');
+            Cache::put('user.info', 'Registered Successfully', 3600);
+            return redirect(route('user.top'));
+        } catch (Exception $e) {
+            // 例外が発生した場合、ログを出力する
+            Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());
+            return back()->withErrors('error')->withInput();
+        }
     }
 
     function register_success() {
