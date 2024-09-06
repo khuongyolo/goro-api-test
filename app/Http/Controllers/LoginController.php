@@ -49,12 +49,12 @@ class LoginController extends Controller
                 return redirect(route('user.homepage'));
             } else {
                 // ログインが失敗する場合、エラーメッセージを表示する（処理中断）
-                return back()->withErrors(['error' => 'ユーザIDまたはパスワードが正しくありません。'])->withInput();
+                return back()->withErrors(['error' => 'Wrong Password'])->withInput();
             }
         } catch (Exception $e) {
             // 例外が発生した場合、ログを出力する
             Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());
-            return back()->withErrors(['エラーが発生しました。'])->withInput();
+            return back()->withErrors(['ERROR'])->withInput();
         }
 
     }
