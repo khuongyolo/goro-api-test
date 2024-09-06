@@ -143,7 +143,7 @@ class LoginController extends Controller
 
     function verify($verify_code) {
         $user = User::where('verify_code', $verify_code)->first();
-        if (!$user->exists()) return redirect(route('user.login'))->withErrors(['error' => 'User does not exist']);
+        if (!$user->exists()) return redirect(route('user.top'))->withErrors(['error' => 'User does not exist']);
         $user->verify_code = '0';
         $user->updated_at = now();
         $user->update_user = 'GORO';
