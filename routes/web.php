@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsernameAPIController;
 use App\Http\Controllers\UsernameController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,14 @@ use App\Http\Controllers\PostController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::prefix('/user')->name('user.')->group(function () {
+    Route::get('/login', [LoginController::class, 'login'])->name('login');
+    Route::match(['get', 'post'], '/register', [LoginController::class, 'register'])->name('register');
+    // Route::get('/verify', [LoginController::class, 'showVerifyOtp'])->name('showverifyotp');
+    // Route::post('/verify', [LoginController::class, 'verifyOtp'])->name('verifyotp');
+    Route::get('/verify/{verify_code}', [LoginController::class, 'verify'])->name('verify');
+});
+
 
 Route::get('/', [PostController::class, 'welcome'])->name('welcome');
 
