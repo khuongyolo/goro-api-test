@@ -26,14 +26,6 @@
         </div>
     </form>
 
-    <!-- Google OAuth Registration Button -->
-    <div class="d-grid">
-        {{-- <a href="{{ route('google.login') }}" class="btn btn-danger"> --}}
-        <a href=# class="btn btn-danger">
-            <i class="bi bi-google"></i> Register with Google
-        </a>
-    </div>
-
     <!-- Optional: Login Link -->
     <div class="text-center mt-3">
         <a href="{{ route('user.top') }}">Already have an account? Login here</a>

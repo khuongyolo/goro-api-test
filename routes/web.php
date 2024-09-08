@@ -21,6 +21,19 @@ Route::prefix('/user')->name('user.')->group(function () {
 
     Route::get('/', [LoginController::class, 'index'])->name('top');
     Route::post('/login', [LoginController::class, 'login'])->name('login');
+
+    Route::get('/login/redirect', [LoginController::class, 'redirectToGoogle'])->name('login.redirect');
+    Route::get('/login/callback', [LoginController::class, 'handleGoogleCallback'])->name('login.callback');
+
+
+
+
+
+
+
+
+
+
     Route::match(['get', 'post'], '/register', [LoginController::class, 'register'])->name('register');
     // Route::get('/verify', [LoginController::class, 'showVerifyOtp'])->name('showverifyotp');
     // Route::post('/verify', [LoginController::class, 'verifyOtp'])->name('verifyotp');

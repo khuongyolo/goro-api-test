@@ -15,8 +15,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
+use Laravel\Socialite\Facades\Socialite;
 
 
 
@@ -71,13 +74,7 @@ class LoginController extends Controller
 
             // 同じメールアドレスで同じ権限を持つユーザが既に存在している場合、登録できない
             $existingUser =  User::where('email', $registerEmail)->first();
-            if (!empty($existingUser)) return back()->withErrors(['error' => 'User does not exist'])->withInput();
-
-            $old_request = [
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => $request->password,
-            ];
+            if (!empty($existingUser)) return back()->withErrors(['error' => 'Your account has been registered and is awaiting email verification.'])->withInput();
 
             $verify_code = Str::random(32);
 
@@ -178,5 +175,82 @@ class LoginController extends Controller
             return back()->withErrors(['ERROR'])->withInput();
         }
     }
+
+    /**
+     * OAuthプロバイダへリダイレクトする
+     *
+     * @return RedirectResponse
+     */
+    public function redirectToGoogle(): RedirectResponse
+    {
+        return Socialite::driver('google')
+            ->with(['prompt' => 'select_account'])
+            ->redirect();
+        // return Socialite::driver('google')->redirect();
+    }
+
+    /**
+     * OAuthプロバイダからのコールバックを処理する
+     *
+     * @return RedirectResponse
+     */
+    public function handleGoogleCallback(): RedirectResponse
+    {
+        $googleUser = Socialite::driver('google')->stateless()->user();
+        // dd($googleUser);
+        // 許可するドメインをここに記述
+        // $allowedEmailDomains = ['example.com', 'example.co.jp'];
+
+        // $userEmailDomain = substr(strrchr($googleUser->getEmail(), "@"), 1);
+
+        // if (!in_array($userEmailDomain, $allowedEmailDomains)) {
+        //     return redirect()->route('user.top');
+        // }
+
+        // User::updateOrCreate([
+        //     'google_id' => $googleUser->getId(),
+        // ], [
+        //     'name' => $googleUser->getName(),
+        //     'email' => $googleUser->getEmail(),
+        //     'created_at' => now(),
+        //     'create_user' => 'GORO',
+        //     'updated_at' => now(),
+        // ]);
+        $user = User::where('google_id', $googleUser->getId())->first() ??
+                User::where('email', $googleUser->getEmail())->first();
+        if (empty($user)) {
+            $user = new User();
+            $user->name = $googleUser->getName();
+            $user->email = $googleUser->getEmail();
+            $user->created_at = now();
+            $user->create_user = 'GORO';
+        }
+        if (empty($user->google_id)) $user->google_id = $googleUser->getId();
+        $user->save();
+
+        Auth::login($user);
+        return redirect()->route('user.homepage');
+    }
+
+    /**
+     * ログイン失敗時の画面を表示する
+     *
+     * @return View
+     */
+    public function failLogin(): View
+    {
+        return view('login.fail');
+    }
+
+    /**
+     * ログアウトする
+     *
+     * @return RedirectResponse
+     */
+    // public function logout(): RedirectResponse
+    // {
+    //     Auth::logout();
+    //     return redirect()->route('welcome');
+    // }
 
 }

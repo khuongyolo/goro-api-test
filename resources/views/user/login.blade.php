@@ -29,7 +29,7 @@
     <!-- Google OAuth Login Button -->
     <div class="d-grid">
         {{-- <a href="{{ route('google.login') }}" class="btn btn-danger"> --}}
-        <a href="#" class="btn btn-danger">
+        <a href = {{ route('user.login.redirect') }} class="btn btn-danger">
             <i class="bi bi-google"></i> Login with Google
         </a>
     </div>
