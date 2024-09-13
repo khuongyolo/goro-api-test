@@ -73,7 +73,9 @@ class LoginController extends Controller
             $registerEmail = $request->email;
 
             // 同じメールアドレスで同じ権限を持つユーザが既に存在している場合、登録できない
-            $existingUser =  User::where('email', $registerEmail)->first();
+            $existingUser =  User::where('email', $registerEmail)
+                                ->whereRaw('LENGTH(verify_code) > 2') // real = 32
+                                ->first();
             if (!empty($existingUser)) return back()->withErrors(['error' => 'Your account has been registered and is awaiting email verification.'])->withInput();
 
             $verify_code = Str::random(32);

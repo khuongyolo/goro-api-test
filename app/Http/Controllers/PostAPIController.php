@@ -19,7 +19,7 @@ class PostAPIController extends Controller
     function index()
     {
         try {
-            $posts = Post::all();
+            $posts = Post::orderBy('created_at', 'desc')->get();
             return response()->json([
                 'view'  => '/api/index',
                 'data'  => $posts,
