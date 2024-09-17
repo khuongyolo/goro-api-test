@@ -23,7 +23,6 @@ class PostController extends Controller
 
     function index(Request $request){
         try {
-            // dd($request);
             $searchString = [
                 'title' => null,
                 'content' => null,
@@ -45,7 +44,7 @@ class PostController extends Controller
                     ->where(DB::raw('LOWER(author)'), 'like', '%' . mb_strtolower($searchString['author']) . '%');
                 });
             }
-            $posts = $posts->get();
+            $posts = $posts->orderBy('created_at', 'desc')->get();
 
             return view('index', compact('posts'));
         }

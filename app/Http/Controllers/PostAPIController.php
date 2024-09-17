@@ -2,24 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Post;
-use Illuminate\Validation\ValidationException;
 use Exception;
-use App\Http\Requests\PostRequest;
-use App\Http\Requests\PostAPIRequest;
-use Illuminate\Support\Facades\Session;
+use App\Models\Post;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Requests\PostRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cookie;
+use App\Http\Requests\PostAPIRequest;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\ValidationException;
 
 class PostAPIController extends Controller
 {
-    function index()
+    function index(Request $request)
     {
         try {
-            $posts = Post::orderBy('created_at', 'desc')->get();
+            $searchString = [
+                'title' => null,
+                'content' => null,
+                'author' => null,
+            ];
+
+            $searchString = $request->has('searchString')
+            ? $request->searchString
+            : $searchString;
+
+            Session::put('post.searchString', $searchString);
+
+            $posts = Post::query();
+            // 検索する文字列で検索
+            if (!empty($searchString)) {
+                $posts = $posts->where(function ($query) use ($searchString) {
+                    $query->where(DB::raw('LOWER(title)'), 'like', '%' . mb_strtolower($searchString['title']) . '%')
+                    ->where(DB::raw('LOWER(content)'), 'like', '%' . mb_strtolower($searchString['content']) . '%')
+                    ->where(DB::raw('LOWER(author)'), 'like', '%' . mb_strtolower($searchString['author']) . '%');
+                });
+            }
+            $posts = $posts->orderBy('created_at', 'desc')->get();
             return response()->json([
                 'view'  => '/api/index',
                 'data'  => $posts,

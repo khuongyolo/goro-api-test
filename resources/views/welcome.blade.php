@@ -99,43 +99,58 @@
             <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body">
                     <h2>Parameters</h2>
-                    <form action="{{ route('api.index') }}" method="GET">
-                        <div class="row">
-                            <div class="col-sm-10 offset-sm-2">
-                                <button type="submit" class="btn btn-primary">Submit API</button>
+                    <form action="{{ route('api.index') }}" method="POST">
+                    @csrf
+                        <div class="row mb-3">
+                            <div class="col">
+                                <input type="text" class="form-control" placeholder="Search by Title" name="searchString[title]" value="{{ Session::get('post.searchString')['title'] }}">
+                            </div>
+                            <div class="col">
+                                <input type="text" class="form-control" placeholder="Search by Content" name="searchString[content]" value="{{ Session::get('post.searchString')['content'] }}">
+                            </div>
+                            <div class="col">
+                                <input type="text" class="form-control" placeholder="Search by Author" name="searchString[author]" value="{{ Session::get('post.searchString')['author'] }}">
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-primary" type="submit">Search API</button>
+                                <button class="btn btn-secondary" type="button" onclick="clearSearch()">Clear</button>
                             </div>
                         </div>
                     </form>
                     <h2>Responses</h2>
+                    <h3>200 OK</h3>
                         <div id="error-container">
                             <pre><code>
 {
-  "data": [
-    {
-      "id": 89,
-      "title": "2123",
-      "content": "awd",
-      "author": "awd",
-      "created_at": "2024-08-23T14:30:53.000000",
-      "updated_at": "2024-08-23T14:30:53.000000"
-    },
-    {
-      "id": 88,
-      "title": "123",
-      "content": "123",
-      "author": "123",
-      "created_at": "2024-08-23T13:54:15.000000Z",
-      "updated_at": "2024-08-23T13:54:15.000000Z"
-    },
-    {
-      "id": 87,
-      "title": "adawdaw",
-      "content": "awdawdawd",
-      "author": "1111111",
-      "created_at": "2024-08-23T13:50:18.000000Z",
-      "updated_at": "2024-08-23T13:50:18.000000Z"
-    },
-  ]
+    "view": "/api/index",
+    "data": [
+        {
+            "id": 34,
+            "title": "Omnis dolor et accusantium repellat error ex sed.",
+            "content": "Dicta fuga sed nulla autem repudiandae nam incidunt. Tempore minus sunt qui non. Quaerat ex minima perferendis recusandae. Earum officiis sint labore necessitatibus ut hic.",
+            "author": "Lia Zboncak",
+            "created_at": "2024-09-08T16:37:15.000000Z",
+            "updated_at": "2024-09-08T16:37:15.000000Z"
+        },
+        {
+            "id": 11,
+            "title": "Commodi a est modi omnis asperiores rem beatae cupiditate.",
+            "content": "Quis inventore aspernatur necessitatibus sunt ex enim. Harum aut rerum ut dolores ut architecto. Nesciunt molestiae aut aut cum. Illo soluta minus et deleniti.",
+            "author": "Dr. Brandy Feil",
+            "created_at": "2024-09-08T16:37:09.000000Z",
+            "updated_at": "2024-09-08T16:37:09.000000Z"
+        }
+    ]
+}
+                            </code></pre>
+                        </div>
+                    <h3>500 Internal Server Error</h3>
+                        <div id="error-container">
+                            <pre><code>
+{
+  "redirect":'/api/index',
+  "error": 'An unexpected error occurred',
+  "message": $e->getMessage()
 }
                             </code></pre>
                         </div>
@@ -476,6 +491,11 @@
         });
     }
 });
+    function clearSearch() {
+        document.querySelectorAll('input[name="searchString[title]"], input[name="searchString[content]"], input[name="searchString[author]"]').forEach(input => {
+            input.value = ''; // Clear input values of title, content, and author
+        });
+    }
 
 
 
