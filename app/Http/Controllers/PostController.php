@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Post;
-use Illuminate\Validation\ValidationException;
 use Exception;
+use App\Models\Post;
+use Illuminate\Http\Request;
 use App\Http\Requests\PostRequest;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\ValidationException;
 
 class PostController extends Controller
 {
@@ -21,13 +21,36 @@ class PostController extends Controller
         return view('welcome',compact('posts'));
     }
 
-    function index(){
+    function index(Request $request){
         try {
-            $posts = Post::all();
+            // dd($request);
+            $searchString = [
+                'title' => null,
+                'content' => null,
+                'author' => null,
+            ];
+
+            $searchString = $request->has('searchString')
+            ? $request->searchString
+            : $searchString;
+
+            Session::put('post.searchString', $searchString);
+
+            $posts = Post::query();
+            // 検索する文字列で検索
+            if (!empty($searchString)) {
+                $posts = $posts->where(function ($query) use ($searchString) {
+                    $query->where(DB::raw('LOWER(title)'), 'like', '%' . mb_strtolower($searchString['title']) . '%')
+                    ->where(DB::raw('LOWER(content)'), 'like', '%' . mb_strtolower($searchString['content']) . '%')
+                    ->where(DB::raw('LOWER(author)'), 'like', '%' . mb_strtolower($searchString['author']) . '%');
+                });
+            }
+            $posts = $posts->get();
+
             return view('index', compact('posts'));
         }
         catch (Exception $e) {
-            Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());
+            Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-POST, ' . $e->getMessage());
             return back()->withErrors('error')->withInput();
         }
     }

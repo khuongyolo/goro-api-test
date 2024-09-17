@@ -22,6 +22,25 @@
                 <button class="btn btn-success shadow text-nowrap float-end px-4" type="submit">Register</button>
             </form>
         </div>
+        {{-- Search --}}
+        <form action="{{ route('index') }}" method="POST">
+        @csrf
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Search by Title" name="searchString[title]" value="{{ Session::get('post.searchString')['title'] }}">
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Search by Content" name="searchString[content]" value="{{ Session::get('post.searchString')['content'] }}">
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Search by Author" name="searchString[author]" value="{{ Session::get('post.searchString')['author'] }}">
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                    <button class="btn btn-secondary" type="button" onclick="clearSearch()">Clear</button>
+                </div>
+            </div>
+        </form>
 
         <table class="table table-striped table-hover table-bordered align-middle">
             <thead class="table-dark">
@@ -56,6 +75,13 @@
             </tbody>
         </table>
     </div>
+    <script>
+        function clearSearch() {
+            document.querySelectorAll('input[name="searchString[title]"], input[name="searchString[content]"], input[name="searchString[author]"]').forEach(input => {
+                input.value = ''; // Clear input values of title, content, and author
+            });
+        }
+    </script>
 
 @endsection
 
