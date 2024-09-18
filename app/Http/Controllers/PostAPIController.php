@@ -6,7 +6,6 @@ use Exception;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Http\Requests\PostRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\PostAPIRequest;
@@ -32,7 +31,6 @@ class PostAPIController extends Controller
             Session::put('post.searchString', $searchString);
 
             $posts = Post::query();
-            // 検索する文字列で検索
             if (!empty($searchString)) {
                 $posts = $posts->where(function ($query) use ($searchString) {
                     $query->where(DB::raw('LOWER(title)'), 'like', '%' . mb_strtolower($searchString['title']) . '%')
