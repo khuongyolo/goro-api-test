@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\DatabaseController;
 use App\Http\Controllers\UsernameController;
 use App\Http\Controllers\UsernameAPIController;
@@ -74,6 +75,8 @@ Route::prefix('/database')->name('user.')->group(function () {
     Route::get('/test', [DatabaseController::class, 'test'])->name('test');
 });
 
+// Webhook
+Route::post('/webhook', [WebhookController::class, 'handleWebhook']);
 
 Route::fallback(function ($routes) {
     abort(404);
