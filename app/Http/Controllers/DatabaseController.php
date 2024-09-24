@@ -9,4 +9,7 @@ class DatabaseController extends Controller
     public function index() {
         return view('database.index');
     }
+    public function test() {
+        return view('database.test');
+    }
 }

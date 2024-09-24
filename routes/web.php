@@ -71,6 +71,7 @@ Route::match(['get', 'post'], '/register', [PostController::class, 'register'])-
 // database
 Route::prefix('/database')->name('user.')->group(function () {
     Route::get('/', [DatabaseController::class, 'index'])->name('index');
+    Route::get('/test', [DatabaseController::class, 'test'])->name('test');
 });
 
 
