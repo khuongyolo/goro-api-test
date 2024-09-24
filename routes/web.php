@@ -1,10 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UsernameAPIController;
-use App\Http\Controllers\UsernameController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\DatabaseController;
+use App\Http\Controllers\UsernameController;
+use App\Http\Controllers\UsernameAPIController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +67,11 @@ Route::match(['get', 'post'], '/register', [PostController::class, 'register'])-
 
 // Route::post('/addpost', [PostController::class, 'addposts'])->name('addposts');
 
+
+// database
+Route::prefix('/database')->name('user.')->group(function () {
+    Route::get('/', [DatabaseController::class, 'index'])->name('index');
+});
 
 
 Route::fallback(function ($routes) {
