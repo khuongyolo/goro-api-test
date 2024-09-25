@@ -11,11 +11,12 @@ use App\Mail\ConfirmationMail;
 use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
@@ -224,6 +225,14 @@ class LoginController extends Controller
             $user = new User();
             $user->name = $googleUser->getName();
             $user->email = $googleUser->getEmail();
+            // Lấy avatar URL từ Google
+            $avatarUrl = $googleUser->getAvatar();
+
+            // Tải ảnh avatar về và mã hóa nó thành base64
+            if ($avatarUrl) {
+                $avatarContents = Http::get($avatarUrl)->body(); // Tải ảnh từ URL
+                $user->avatar = base64_encode($avatarContents); // Mã hóa base64
+            }
             $user->created_at = now();
             $user->create_user = 'GORO';
         }

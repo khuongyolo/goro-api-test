@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name')->comment('Name');
             $table->string('email')->unique()->comment('Email');
             $table->string('google_id')->nullable()->unique()->comment('Google ID');
+            $table->longText('avatar')->nullable();
             $table->string('password')->nullable()->comment('Password');
             $table->string('verify_code')->nullable()->comment('Verify code');
             $table->dateTime('created_at')->comment('Created at');

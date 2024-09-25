@@ -5,6 +5,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\DatabaseController;
+use App\Http\Controllers\HomepageController;
 use App\Http\Controllers\UsernameController;
 use App\Http\Controllers\UsernameAPIController;
 
@@ -44,6 +45,7 @@ Route::prefix('/user')->name('user.')->group(function () {
 
     Route::middleware(['auth'])->group(function () {
         Route::get('/homepage', [LoginController::class, 'homepage'])->name('homepage');
+        Route::post('/change-avatar', [HomepageController::class, 'changeAvatar'])->name('changeAvatar');
     });
 });
 
