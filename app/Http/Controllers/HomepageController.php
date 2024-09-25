@@ -9,22 +9,26 @@ class HomepageController extends Controller
 {
     public function changeAvatar(Request $request)
     {
-        $request->validate([
-            'avatar' => 'required|image',
-        ]);
+        try {
+            $request->validate([
+                'avatar' => 'required|image',
+            ]);
 
-        $user = Auth::user();
+            $user = Auth::user();
 
-        // Mã hóa ảnh thành base64 và lưu vào database
-        if ($request->hasFile('avatar')) {
-            $image = $request->file('avatar');
-            $imageData = base64_encode(file_get_contents($image->path()));
+            // Mã hóa ảnh thành base64 và lưu vào database
+            if ($request->hasFile('avatar')) {
+                $image = $request->file('avatar');
+                $imageData = base64_encode(file_get_contents($image->path()));
 
-            // Cập nhật avatar của user
-            $user->avatar = $imageData;
-            $user->save();
+                // Cập nhật avatar của user
+                $user->avatar = $imageData;
+                $user->save();
+            }
+            return redirect()->back()->with('user.info', 'Avatar has been updated!');
         }
-
-        return redirect()->back()->with('user.info', 'Avatar has been updated!');
+        catch (Exception $e) {
+            Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());
+        }
     }
 }
