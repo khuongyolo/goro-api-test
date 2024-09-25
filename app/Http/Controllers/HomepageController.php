@@ -11,7 +11,7 @@ class HomepageController extends Controller
     {
         try {
             $request->validate([
-                'avatar' => 'required|image',
+                'avatar' => 'required|image|max:10240',
             ]);
 
             $user = Auth::user();
