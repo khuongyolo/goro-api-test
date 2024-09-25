@@ -10,7 +10,7 @@ class HomepageController extends Controller
     public function changeAvatar(Request $request)
     {
         $request->validate([
-            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validation của ảnh
+            'avatar' => 'required|image',
         ]);
 
         $user = Auth::user();
