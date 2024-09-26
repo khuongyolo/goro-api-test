@@ -11,6 +11,7 @@ class HomepageController extends Controller
     public function changeAvatar(Request $request)
     {
         try {
+            dd($request);
             // Xác thực yêu cầu
             $request->validate([
                 'avatar' => 'required|image|max:10240', // Giới hạn kích thước 10MB
