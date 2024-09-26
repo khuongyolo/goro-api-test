@@ -56,6 +56,14 @@ return [
             'throw' => false,
         ],
 
+        'azure_avatar' => [
+            'driver' => 'azure',
+            'name' => env('AZURE_STORAGE_NAME'),
+            'key' => env('AZURE_STORAGE_KEY'),
+            'container' => env('AZURE_STORAGE_CONTAINER'),
+            'url' => env('AZURE_STORAGE_URL'),
+        ],
+
     ],
 
     /*

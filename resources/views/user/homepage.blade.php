@@ -26,15 +26,16 @@
 <div class="d-flex align-items-center">
     @if (Auth::user()->avatar)
         <!-- Hiển thị avatar đã được lưu -->
-        <img src="data:image/jpeg;base64,{{ Auth::user()->avatar }}" alt="Avatar của bạn" class="img-thumbnail" width="150">
+        <img src="{{ Storage::disk('azure_avatar')->url(Auth::user()->avatar) }}" alt="Your Avatar" class="img-thumbnail" width="150">
     @else
         <!-- Hiển thị avatar mặc định nếu chưa có -->
-        <img src="{{ asset('images/default-avatar.png') }}" alt="Avatar mặc định" class="img-thumbnail" width="150">
+        <img src="{{ Storage::disk('azure_avatar')->url('default-avatar.png') }}" alt="Your Avatar" class="img-thumbnail" width="150">
     @endif
+    
     
     <!-- Nút đổi avatar -->
     <button type="button" class="btn btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#changeAvatarModal">
-        Đổi avatar
+        Change avatar
     </button>
 </div>
 <p>Name: {{ Auth::user()->name }}</p>
@@ -48,7 +49,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="changeAvatarModalLabel">Đổi avatar</h5>
+          <h5 class="modal-title" id="changeAvatarModalLabel">Change avatar</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -56,10 +57,10 @@
           <form action="{{ route('user.changeAvatar') }}" method="POST" enctype="multipart/form-data">
               @csrf
               <div class="mb-3">
-                  <label for="avatar" class="form-label">Chọn ảnh avatar mới:</label>
+                  <label for="avatar" class="form-label">Choose new avatar image:</label>
                   <input class="form-control" type="file" name="avatar" id="avatar" accept="image/*" required>
               </div>
-              <button type="submit" class="btn btn-success">Tải lên</button>
+              <button type="submit" class="btn btn-success">Upload</button>
           </form>
         </div>
       </div>

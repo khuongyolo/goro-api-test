@@ -12,6 +12,9 @@
         "laravel/sanctum": "^3.2",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.8",
+        "league/flysystem-azure-blob-storage": "^3.28",
+        "matthewbdaly/laravel-azure-storage": "^2.0",
+        "microsoft/azure-storage-blob": "^1.5",
         "zircote/swagger-php": "^4.10"
     },
     "require-dev": {

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Socialite\Facades\Socialite;
 
 
@@ -225,16 +226,27 @@ class LoginController extends Controller
             $user = new User();
             $user->name = $googleUser->getName();
             $user->email = $googleUser->getEmail();
-            // Lấy avatar URL từ Google
-            $avatarUrl = $googleUser->getAvatar();
-
-            // Tải ảnh avatar về và mã hóa nó thành base64
-            if ($avatarUrl) {
-                $avatarContents = Http::get($avatarUrl)->body(); // Tải ảnh từ URL
-                $user->avatar = base64_encode($avatarContents); // Mã hóa base64
-            }
             $user->created_at = now();
             $user->create_user = 'GORO';
+            $user->save();
+            // Lấy avatar URL từ Google
+            $avatarUrl = $googleUser->getAvatar();
+            // Tải ảnh avatar về và lưu vào azure
+            if ($avatarUrl) {
+                $avatarContents = Http::get($avatarUrl)->body(); // Tải ảnh từ URL
+
+                // lấy extention
+                // $extension = pathinfo($avatarUrl, PATHINFO_EXTENSION);
+
+                // Tạo tên file duy nhất cho avatar
+                $fileName = $user->id . '.png';
+
+                // Lưu avatar vào Azure Blob Storage
+                Storage::disk('azure_avatar')->put($fileName, $avatarContents);
+
+                // dd($path);
+                $user->avatar = $fileName;
+            }
         }
         if (empty($user->google_id)) $user->google_id = $googleUser->getId();
         $user->save();
