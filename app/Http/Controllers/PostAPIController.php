@@ -67,7 +67,7 @@ class PostAPIController extends Controller
 
             Cache::put('post.id', $post->id, 60);
             return response()->json([
-                'view'  => '/api/edit' . $id,
+                'view'  => '/api/edit/' . $id,
                 'data'  => $post,
             ]);
         }
