@@ -13,7 +13,7 @@ class HomepageController extends Controller
         try {
             // Xác thực yêu cầu
             $request->validate([
-                'avatar' => 'required|image|max:10240', // Giới hạn kích thước 10MB
+                'avatar' => 'required|image|max:102400', // Giới hạn kích thước 100MB
             ]);
 
             // Lấy file avatar từ request
