@@ -200,59 +200,48 @@ class LoginController extends Controller
      */
     public function handleGoogleCallback(): RedirectResponse
     {
-        $googleUser = Socialite::driver('google')->stateless()->user();
-        // dd($googleUser);
-        // 許可するドメインをここに記述
-        // $allowedEmailDomains = ['example.com', 'example.co.jp'];
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+            
+            $user = User::where('google_id', $googleUser->getId())->first() ??
+                    User::where('email', $googleUser->getEmail())->first();
+            if (empty($user)) {
+                $user = new User();
+                $user->name = $googleUser->getName();
+                $user->email = $googleUser->getEmail();
+                $user->created_at = now();
+                $user->create_user = 'GORO';
+                $user->save();
+                // Lấy avatar URL từ Google
+                $avatarUrl = $googleUser->getAvatar();
+                // Tải ảnh avatar về và lưu vào azure
+                if ($avatarUrl) {
+                    $avatarContents = Http::get($avatarUrl)->body(); // Tải ảnh từ URL
 
-        // $userEmailDomain = substr(strrchr($googleUser->getEmail(), "@"), 1);
+                    // lấy extention
+                    // $extension = pathinfo($avatarUrl, PATHINFO_EXTENSION);
 
-        // if (!in_array($userEmailDomain, $allowedEmailDomains)) {
-        //     return redirect()->route('user.top');
-        // }
+                    // Tạo tên file duy nhất cho avatar
+                    $fileName = $user->id . '.png';
 
-        // User::updateOrCreate([
-        //     'google_id' => $googleUser->getId(),
-        // ], [
-        //     'name' => $googleUser->getName(),
-        //     'email' => $googleUser->getEmail(),
-        //     'created_at' => now(),
-        //     'create_user' => 'GORO',
-        //     'updated_at' => now(),
-        // ]);
-        $user = User::where('google_id', $googleUser->getId())->first() ??
-                User::where('email', $googleUser->getEmail())->first();
-        if (empty($user)) {
-            $user = new User();
-            $user->name = $googleUser->getName();
-            $user->email = $googleUser->getEmail();
-            $user->created_at = now();
-            $user->create_user = 'GORO';
-            $user->save();
-            // Lấy avatar URL từ Google
-            $avatarUrl = $googleUser->getAvatar();
-            // Tải ảnh avatar về và lưu vào azure
-            if ($avatarUrl) {
-                $avatarContents = Http::get($avatarUrl)->body(); // Tải ảnh từ URL
+                    // Lưu avatar vào Azure Blob Storage
+                    Storage::disk('azure_avatar')->put($fileName, $avatarContents);
 
-                // lấy extention
-                // $extension = pathinfo($avatarUrl, PATHINFO_EXTENSION);
-
-                // Tạo tên file duy nhất cho avatar
-                $fileName = $user->id . '.png';
-
-                // Lưu avatar vào Azure Blob Storage
-                Storage::disk('azure_avatar')->put($fileName, $avatarContents);
-
-                // dd($path);
-                $user->avatar = $fileName;
+                    // dd($path);
+                    $user->avatar = $fileName;
+                }
             }
-        }
-        if (empty($user->google_id)) $user->google_id = $googleUser->getId();
-        $user->save();
+            if (empty($user->google_id)) $user->google_id = $googleUser->getId();
+            $user->save();
 
-        Auth::login($user);
-        return redirect()->route('user.homepage');
+            Auth::login($user);
+            return redirect()->route('user.homepage');
+        }
+        catch (Exception $e) {
+            // 例外が発生した場合、ログを出力する
+            Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());
+            return redirect(route('user.top'));
+        }
     }
 
     /**
