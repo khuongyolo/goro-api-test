@@ -20,10 +20,8 @@ class WebhookController extends Controller
             if (hash_equals($signature, $request->header('X-Hub-Signature'))) {
                 // Nhận webhook thành công, thực hiện git pull
                 // shell_exec("cd {$repoDir} && sudo git pull");
-                $output = [];
-                $returnVar = 0;
-                exec("cd {$repoDir}", $output, $returnVar);
-                exec("sudo git pull", $output, $returnVar);
+                ob_start();
+                system("cd {$repoDir} && sudo git pull");
 
                 return response()->json(['status' => 'Success'], 200);
             } else {
