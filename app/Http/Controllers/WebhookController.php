@@ -22,7 +22,8 @@ class WebhookController extends Controller
                 // shell_exec("cd {$repoDir} && sudo git pull");
                 $output = [];
                 $returnVar = 0;
-                exec("cd {$repoDir} && sudo git pull", $output, $returnVar);
+                exec("cd {$repoDir}", $output, $returnVar);
+                exec("sudo git pull", $output, $returnVar);
 
                 return response()->json(['status' => 'Success'], 200);
             } else {
