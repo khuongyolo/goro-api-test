@@ -78,7 +78,7 @@ Route::prefix('/database')->name('user.')->group(function () {
 });
 
 // Webhook
-Route::post('/webhook', [WebhookController::class, 'handleWebhook']);
+// Route::post('/webhook', [WebhookController::class, 'handleWebhook']);
 
 Route::fallback(function ($routes) {
     abort(404);
