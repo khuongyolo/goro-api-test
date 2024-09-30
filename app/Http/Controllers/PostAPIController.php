@@ -18,6 +18,9 @@ class PostAPIController extends Controller
     function index(Request $request)
     {
         try {
+            $perPage = $request->input('size', 10); 
+            $page = intval($request->input('page', 1));
+
             $searchString = [
                 'title' => null,
                 'content' => null,
@@ -38,11 +41,20 @@ class PostAPIController extends Controller
                     ->where(DB::raw('LOWER(author)'), 'like', '%' . mb_strtolower($searchString['author']) . '%');
                 });
             }
-            $posts = $posts->orderBy('created_at', 'desc')->get();
-            return response()->json([
-                'view'  => '/api/index',
-                'data'  => $posts,
-            ], Response::HTTP_OK); //200
+            $posts = $posts->orderBy('created_at', 'desc')
+                ->paginate($perPage, ['*'], 'page', $page);
+
+            $response = [
+                'desc' => true,
+                'data' => $posts->items(),
+                'page' => $page,
+                'size' => $perPage,
+                'sortBy' => 'created_at',
+                'totals' => $posts->total(),
+                'view'  => '/api/index?' . 'page=' . $page,
+            ];
+
+            return response()->json($response, Response::HTTP_OK); //200
         }
         catch (Exception $e) {
             Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());

@@ -75,6 +75,7 @@
             </tbody>
         </table>
     </div>
+    {{ $posts->links('pagination::bootstrap-5') }}
     <script>
         function clearSearch() {
             document.querySelectorAll('input[name="searchString[title]"], input[name="searchString[content]"], input[name="searchString[author]"]').forEach(input => {

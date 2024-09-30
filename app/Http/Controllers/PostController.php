@@ -44,7 +44,7 @@ class PostController extends Controller
                     ->where(DB::raw('LOWER(author)'), 'like', '%' . mb_strtolower($searchString['author']) . '%');
                 });
             }
-            $posts = $posts->orderBy('created_at', 'desc')->get();
+            $posts = $posts->orderBy('created_at', 'desc')->paginate(10);
 
             return view('index', compact('posts'));
         }
