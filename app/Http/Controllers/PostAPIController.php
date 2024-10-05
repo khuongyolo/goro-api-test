@@ -96,8 +96,7 @@ class PostAPIController extends Controller
     function update(PostAPIRequest $request)
     {
         try {
-            // $id = (Cache::get('post.id'));
-            $id = $request->id;
+            $id = Cache::get('post.id', $request->id);
             $post = Post::find($id);
             if (empty($post)) {
                 return response()->json([
