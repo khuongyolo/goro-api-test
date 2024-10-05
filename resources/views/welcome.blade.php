@@ -339,6 +339,7 @@
                     <div class="card-body">
                         <form id="update_form" method="POST">
                             @csrf
+                            <input type="text" name="id" value="{{ $posts->first()->id }}" hidden>
                             <div class="mb-3">
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-text-paragraph"></i>Title</span>

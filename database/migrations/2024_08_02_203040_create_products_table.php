@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id('id')->comment('ID');
             $table->string('name', 256)->comment('Name');
             $table->string('category_id', 20)->comment('Category ID');
-            $table->string('store_id', 20)->comment('Store ID');
+            $table->string('store_no', 20)->comment('Store Number');
             $table->string('product_id', 20)->comment('Product ID');
+            $table->char('is_frozen', 1)->comment('Is frozen? 0:fresh, 1:frozen');
             $table->char('unit', 1)->comment('Unit:1: kg, 2: g, 3: lít, 4: ml');
             $table->integer('volume')->comment('Volume');
             $table->dateTime('created_at')->comment('Created at');
