@@ -308,24 +308,6 @@
 }
                             </code></pre>
                         </div>
-                        <h3>422 Unprocessable Entity</h3>
-                        <div id="error-container">
-                            <pre><code>
-{
-    "errors": {
-        "title": [
-            "The title is required."
-        ],
-        "content": [
-            "The content is required."
-        ],
-        "author": [
-            "The author field is required."
-        ]
-    }
-}
-                            </code></pre>
-                        </div>
                     <h3>500 Internal Server Error</h3>
                         <div id="error-container">
                             <pre><code>
@@ -400,6 +382,24 @@
 {
   "redirect": "/api/index",
   "error": "This post does not exist"
+}
+                            </code></pre>
+                        </div>
+                        <h3>422 Unprocessable Entity</h3>
+                        <div id="error-container">
+                            <pre><code>
+{
+    "errors": {
+        "title": [
+            "The title is required."
+        ],
+        "content": [
+            "The content is required."
+        ],
+        "author": [
+            "The author field is required."
+        ]
+    }
 }
                             </code></pre>
                         </div>
