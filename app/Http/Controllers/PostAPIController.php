@@ -18,7 +18,7 @@ class PostAPIController extends Controller
     function index(Request $request)
     {
         try {
-            $perPage = $request->input('size', 10); 
+            $perPage = $request->input('size', 100); 
             $page = intval($request->input('page', 1));
 
             $searchString = [
