@@ -103,13 +103,13 @@
                     @csrf
                         <div class="row mb-3">
                             <div class="col">
-                                <input type="text" class="form-control" placeholder="Search by Title" name="searchString[title]" value="{{ Session::get('post.searchString')['title'] ?? '' }}">
+                                <input type="text" class="form-control" placeholder="searchString['title']" name="searchString[title]" value="{{ Session::get('post.searchString')['title'] ?? '' }}">
                             </div>
                             <div class="col">
-                                <input type="text" class="form-control" placeholder="Search by Content" name="searchString[content]" value="{{ Session::get('post.searchString')['content'] ?? '' }}">
+                                <input type="text" class="form-control" placeholder="searchString['content']" name="searchString[content]" value="{{ Session::get('post.searchString')['content'] ?? '' }}">
                             </div>
                             <div class="col">
-                                <input type="text" class="form-control" placeholder="Search by Author" name="searchString[author]" value="{{ Session::get('post.searchString')['author'] ?? '' }}">
+                                <input type="text" class="form-control" placeholder="searchString['author']" name="searchString[author]" value="{{ Session::get('post.searchString')['author'] ?? '' }}">
                             </div>
                             <div class="col-auto">
                                 <button class="btn btn-primary" type="submit">Search API</button>
