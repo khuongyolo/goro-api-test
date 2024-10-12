@@ -15,13 +15,13 @@ use Illuminate\Validation\ValidationException;
 class PostController extends Controller
 {
 
-    function welcome(){
+    public function welcome(){
         $posts = Post::all();
         Cache::put('post.id', $posts->first()->id, 60);
         return view('welcome',compact('posts'));
     }
 
-    function index(Request $request){
+    public function index(Request $request){
         try {
             $searchString = [
                 'title' => null,
