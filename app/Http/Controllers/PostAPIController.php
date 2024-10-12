@@ -12,10 +12,12 @@ use App\Http\Requests\PostAPIRequest;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
 
 class PostAPIController extends Controller
 {
-    function index(Request $request)
+    public function index(Request $request)
     {
         try {
             $perPage = $request->input('size', 100); 
@@ -66,8 +68,7 @@ class PostAPIController extends Controller
         }
     }
 
-    function edit($id)
-    {
+    public function edit($id) {
         try {
             $post = Post::find($id);
             if (empty($post)) {
@@ -93,46 +94,48 @@ class PostAPIController extends Controller
         }
     }
 
-    function update(PostAPIRequest $request)
+    public function update(PostAPIRequest $request)
     {
+        $response = null;
+
         try {
             // $id = Cache::get('post.id', $request->id);
             $id = $request->id;
             $post = Post::find($id);
             if (empty($post)) {
-                return response()->json([
+                $response = response()->json([
                     'redirect' => '/api/index',
                     'error' => 'This post does not exist',
                     'id'    => $id
                 ], Response::HTTP_NOT_FOUND); // 404 Not Found
+            } else {
+                $post->title      = $request->title;
+                $post->content    = $request->content;
+                $post->author     = $request->author;
+                // save DB
+                $post->save();
+                $response = response()->json([
+                    'redirect'  => '/api/edit/' . $id,
+                    'message'   => 'Post updated successfully',
+                ], Response::HTTP_OK);  // 200
             }
-
-            $post->title      = $request->title;
-            $post->content    = $request->content;
-            $post->author     = $request->author;
-            // save DB
-            $post->save();
-            return response()->json([
-                'redirect'  => '/api/edit/' . $id,
-                'message'   => 'Post updated successfully',
-            ], Response::HTTP_OK);  //200
-        }
-        catch (ValidationException $e) {
-            return response()->json([
+        } catch (ValidationException $e) {
+            $response = response()->json([
                 'errors' => $e->errors()
-            ], Response::HTTP_UNPROCESSABLE_ENTITY); //422
-        }
-        catch (Exception $e) {
+            ], Response::HTTP_UNPROCESSABLE_ENTITY); // 422
+        } catch (Exception $e) {
             Log::error(__CLASS__ . ', ' . __FUNCTION__ . ', SYS-LOGIN, ' . $e->getMessage());
-            return response()->json([
+            $response = response()->json([
                 'redirect'  => '/api/index',
                 'error' => 'An unexpected error occurred',
                 'message' => $e->getMessage()
-            ], Response::HTTP_INTERNAL_SERVER_ERROR); //500
+            ], Response::HTTP_INTERNAL_SERVER_ERROR); // 500
         }
+
+        return $response;
     }
 
-    function delete($id)
+    public function delete($id)
     {
         try {
             $post = Post::find($id);
@@ -154,7 +157,7 @@ class PostAPIController extends Controller
     }
 
 
-    function register(PostAPIRequest $request)
+    public function register(PostAPIRequest $request)
     {
         try {
             Post::create($request->all());
